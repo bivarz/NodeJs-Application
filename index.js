@@ -6,13 +6,28 @@ app.use(express.json());
 
 const users = ["Paulo","Diego","Tiago"]
 
-app.get("/users", (req,res)=>{
+function checkName(req,res,next) {
+if(!req.body.name){
+  return res.status(400).json({error:"User name is required"});
+}
+  return next();
+
+}
+
+function checkIndex(req,res,next) {
+  if(!users[req.params.index]){
+    return res.status(400).json({error:"User does not exists"});
+  }
+    return next();
+  }
+
+app.get("/users",(req,res)=>{
 
   return res.json(users);
 
 })
 
-app.get("/users/:index", (req,res)=>{
+app.get("/users/:index", checkName,checkIndex ,(req,res)=>{
   const {index} = req.params;
 
   return res.json(users[index]);
@@ -20,7 +35,7 @@ app.get("/users/:index", (req,res)=>{
 })
 
 // Create 1
-app.post("/users", (req,res)=>{
+app.post("/users", checkName, (req,res)=>{
   const {name} = req.body;
 
   users.push(name)
@@ -30,7 +45,7 @@ app.post("/users", (req,res)=>{
 })
 
 //Delete 1
-app.delete("/users/:index", (req,res)=>{
+app.delete("/users/:index", checkIndex,(req,res)=>{
   const {index} = req.params;
   
   users.splice(index,1);
@@ -39,7 +54,7 @@ app.delete("/users/:index", (req,res)=>{
 })
 
 //update 1
-app.put("/users/:index", (req,res)=>{
+app.put("/users/:index",checkName,checkIndex, (req,res)=>{
   const {index} = req.params;
   const {name} = req.body;
 
