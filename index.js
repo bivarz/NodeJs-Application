@@ -15,9 +15,12 @@ if(!req.body.name){
 }
 
 function checkIndex(req,res,next) {
+ const user = users[req.params.index];
+ 
   if(!users[req.params.index]){
     return res.status(400).json({error:"User does not exists"});
   }
+  req.user = user;
     return next();
   }
 
@@ -27,10 +30,8 @@ app.get("/users",(req,res)=>{
 
 })
 
-app.get("/users/:index", checkName,checkIndex ,(req,res)=>{
-  const {index} = req.params;
-
-  return res.json(users[index]);
+app.get("/users/:index",checkIndex ,(req,res)=>{
+   return res.json(req.user);
 
 })
 
