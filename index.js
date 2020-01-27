@@ -1,10 +1,52 @@
-const express = require('express')
+const express = require('express');
+const app = express();
+
+app.use(express.json());
 
 
-const app = express()
+const users = ["Paulo","Diego","Tiago"]
 
-app.get("/", (req,res)=>{
-  return res.json({message: "hello"})
+app.get("/users", (req,res)=>{
+
+  return res.json(users);
+
 })
 
-app.listen(3000)
+app.get("/users/:index", (req,res)=>{
+  const {index} = req.params;
+
+  return res.json(users[index]);
+
+})
+
+// Create 1
+app.post("/users", (req,res)=>{
+  const {name} = req.body;
+
+  users.push(name)
+
+  return res.json(users);
+
+})
+
+//Delete 1
+app.delete("/users/:index", (req,res)=>{
+  const {index} = req.params;
+  
+  users.splice(index,1);
+
+  return res.json(users);
+})
+
+//update 1
+app.put("/users/:index", (req,res)=>{
+  const {index} = req.params;
+  const {name} = req.body;
+
+  users[index]= name;
+  return res.json(users);
+})
+
+
+
+app.listen(3000);
