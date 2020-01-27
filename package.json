@@ -5,7 +5,13 @@
   "repository": "https://github.com/bivarz/NodeJs-Application.git",
   "author": "bivarz <53359269+bivarz@users.noreply.github.com>",
   "license": "MIT",
+  "scripts": {
+    "dev":"nodemon index.js"
+  },
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
   }
 }
