@@ -35,7 +35,7 @@ app.delete("/users/:index", (req,res)=>{
   
   users.splice(index,1);
 
-  return res.json(users);
+  return res.send();
 })
 
 //update 1
