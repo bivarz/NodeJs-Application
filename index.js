@@ -1,68 +1,116 @@
 const express = require('express');
+
 const app = express();
 
 app.use(express.json());
 
 
-const users = ["Paulo","Diego","Tiago"]
+const projects = [];
 
-function checkName(req,res,next) {
-if(!req.body.name){
-  return res.status(400).json({error:"User name is required"});
-}
-  return next();
-
-}
-
-function checkIndex(req,res,next) {
- const user = users[req.params.index];
+ // => Middleware que checa se o projeto existe
  
-  if(!users[req.params.index]){
-    return res.status(400).json({error:"User does not exists"});
-  }
-  req.user = user;
-    return next();
-  }
+function checkExist(req,res,next) {
+   const {id} = req.params
+   const project = projects.find(p =>p.id ==id)
 
-app.get("/users",(req,res)=>{
+   if(!project){
+     return res.status(404).json({erro:"Project not found, try again!"});
+   }
+  next()
+}
 
-  return res.json(users);
+// => Middleware que avisa que usuários ja existe
 
-})
+function checkIdExist(req,res,next) {
+  const {id} = req.body
 
-app.get("/users/:index",checkIndex ,(req,res)=>{
-   return res.json(req.user);
+  const project = projects.findIndex(p => p.id == id)
 
-})
+  if(project !=-1)
 
-// Create 1
-app.post("/users", checkName, (req,res)=>{
-  const {name} = req.body;
+  return res.status(400).json({erro:`O usuário com id ${id} já existe`})
 
-  users.push(name)
+  next()
+}
 
-  return res.json(users);
+// => Middleware que gera log do número de requisições
+ 
+function createLog(req,res,next) {
+  console.count("Número de requisições:")
 
-})
-
-//Delete 1
-app.delete("/users/:index", checkIndex,(req,res)=>{
-  const {index} = req.params;
+  return next()
   
-  users.splice(index,1);
+}
 
-  return res.send();
+app.use(createLog)
+
+/*
+ ==> Retorna todos os projetos/ o res.json deve conter o array para listar todos 
+ cadastrados.
+ */
+app.get("/projects", (req,res)=>{
+   return res.json(projects);
 })
 
-//update 1
-app.put("/users/:index",checkName,checkIndex, (req,res)=>{
-  const {index} = req.params;
-  const {name} = req.body;
+/*
+ ==> Request body: id, title
+ =====>Cadastra um novo projeto, pega o id e title do body, depois coloca os dados
+ dentro de um array, sendo assim o "task" poderá ser alterado com acesso: projects.nprojects.tasks.
+ */
+app.post("/projects",checkIdExist,(req,res)=>{
+const {id, title, tasks} = req.body;
 
-  users[index]= name;
-  return res.json(users);
+const nProjects = {
+  id,
+  title,
+  tasks:[]
+}
+projects.push(nProjects)
+return res.json(projects)
 })
 
 
+// => Altera o título do projeto com o id presente nos parâmetros da rota.
+ 
+app.put("/projects/:id",checkExist, (req,res)=>{
+  const { id } = req.params;
+  const { title } = req.body;
 
-app.listen(3000);
+  const project = projects.find(p => p.id == id);
+
+  project.title = title;
+
+  return res.json(project);
+  })
+
+
+ // => Deleta o projeto associado ao id presente nos parâmetros da rota.
+ 
+app.delete("/projects/:id",checkExist,(req,res)=>{
+  const {id} = req.params;
+
+  const projectIndex= projects.findIndex(p => p.id == id)
+
+  projects.splice(projectIndex,1) 
+ 
+  return res.json(projects)
+  })
+
+
+
+
+ // => Adiciona uma nova tarefa no projeto escolhido via id; 
+ 
+app.post("/projects/:id/tasks",checkExist,(req,res)=>{
+  const {title} = req.body;
+  const {id} = req.params;
+
+  const project = projects.find(p => p.id == id)
+
+  project.tasks.push(title) 
+ 
+  return res.json(project)
+  })
+
+
+app.listen(3333);
