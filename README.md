@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img alt="NodeJS" src="https://pngimage.net/wp-content/uploads/2018/06/node-js-png-6.png" width="200px" />
+    <img alt="NodeJS" src="https://github.com/bivarz/NodeJs-Application/blob/master/node-js-png-6.png" width="350px" />
 </h1>
 <h3 align="center">
   :dart: Challenge 1: NodeJS concepts | GET,POST,PUT & DELETE
