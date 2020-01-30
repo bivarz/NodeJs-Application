@@ -14,7 +14,7 @@
 
 ## :rocket: About the challenge
 
-Create an application to store projects and their tasks from scratch using express [Express](https://expressjs.com/pt-br/).
+Create an application to store projects and their tasks from scratch using [Express](https://expressjs.com/pt-br/).
 
 ### Routes
 
